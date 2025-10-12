@@ -1980,7 +1980,7 @@ bool setupVideo(void)
 	int32_t screenW = SCREEN_W * config.videoScaleFactor;
 	int32_t screenH = SCREEN_H * config.videoScaleFactor;
 
-	uint32_t rendererFlags = 0;
+	uint32_t rendererFlags = SDL_RENDERER_SOFTWARE;
 
 	SDL_DisplayMode dm;
 

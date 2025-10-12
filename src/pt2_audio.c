@@ -474,9 +474,14 @@ bool setupAudio(void)
 
 	audio.callbackOngoing = false;
 
+#if SDL_BIG_ENDIAN
+	// byte swap audio for big endian systems
+	want.format = AUDIO_S16MSB;
+#else
+	want.format = AUDIO_S16;
+#endif
 	want.freq = config.soundFrequency;
 	want.samples = (uint16_t)config.soundBufferSize;
-	want.format = AUDIO_S16;
 	want.channels = 2;
 	want.callback = audioCallback;
 	want.userdata = NULL;

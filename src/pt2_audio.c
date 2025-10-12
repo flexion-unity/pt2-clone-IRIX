@@ -473,10 +473,21 @@ bool setupAudio(void)
 	SDL_AudioSpec want, have;
 
 	audio.callbackOngoing = false;
-
-	want.freq = config.soundFrequency;
-	want.samples = (uint16_t)config.soundBufferSize;
+#if SDL_BIG_ENDIAN
+	// byte swap audio for big endian systems
+	want.format = AUDIO_S16MSB;
+#else
 	want.format = AUDIO_S16;
+#endif
+	want.samples = (uint16_t)config.soundBufferSize;
+
+#if defined(__sgi)
+	if (want.samples < 4096) {
+		printf("Note: Increased sample buffer size to 4096 for SGI.\n");
+		want.samples = 4096;
+	}
+#endif
+	want.freq = config.soundFrequency;
 	want.channels = 2;
 	want.callback = audioCallback;
 	want.userdata = NULL;

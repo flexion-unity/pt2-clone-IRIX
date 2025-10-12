@@ -1,4 +1,6 @@
-
+build/
+core
+release/other/pt2-clone
 pt_pal_editor/vs2019_project/.vs/pt_pal_editor/v16/.suo
 pt_pal_editor/vs2019_project/pt_pal_editor/Release/pt_pal_editor.vcxproj.FileListAbsolute.txt
 pt_pal_editor/vs2019_project/pt_pal_editor/Debug/pt_pal_editor.vcxproj.FileListAbsolute.txt

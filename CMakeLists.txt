@@ -24,8 +24,13 @@ if("${SDL2_LIBRARIES}" STREQUAL "")
     set(SDL2_LIBRARIES "SDL2::SDL2")
 endif()
 
-target_link_libraries(pt2-clone
-    PRIVATE m ${SDL2_LIBRARIES})
+if(CMAKE_SYSTEM_NAME STREQUAL "IRIX" OR CMAKE_SYSTEM_NAME STREQUAL "IRIX64")
+    message(STATUS "IRIX detected!")
+    target_link_libraries(pt2-clone  -Wl,-rpath-link=/usr/lib32 -Wl,-rpath=/usr/lib32:/usr/sgug/lib32 -lGLcore -laudio -Wl,--allow-shlib-undefined -pthread ${SDL2_LIBRARIES} )
+    target_compile_options(pt2-clone PRIVATE ${SDL2_CFLAGS} -I/usr/sgug/lib/gcc/mips-sgi-irix6.5/9/include -I/usr/include -I/usr/sgug/include )
+else()
+    target_link_libraries(pt2-clone PRIVATE m ${SDL2_LIBRARIES})
+endif()
     
 target_compile_definitions(pt2-clone
     PRIVATE HAS_LIBFLAC)

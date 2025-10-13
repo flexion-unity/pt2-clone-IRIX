@@ -405,6 +405,12 @@ static void setVisualPathToCwd(void)
 	ui.updateDiskOpPathText = true;
 }
 
+bool changePathToTmp(void)
+{
+	char *tmpPath = "/tmp/";
+	return (tmpPath != NULL && chdir(tmpPath) != 0);
+}
+
 bool changePathToDesktop(void)
 {
 #ifdef _WIN32

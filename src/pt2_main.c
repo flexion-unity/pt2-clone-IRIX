@@ -339,7 +339,11 @@ int main(int argc, char *argv[])
 	if (config.startInFullscreen)
 		toggleFullscreen();
 
+#if defined(__sgi)
+	changePathToTmp(); // we don't want stuff to be written to the desktop on IRIX
+#else
 	changePathToDesktop(); // change path to desktop now
+#endif
 	diskOpSetInitPath(); // set path to custom path in config (if present)
 
 	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);

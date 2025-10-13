@@ -294,6 +294,12 @@ void readMouseXY(void)
 	}
 	else
 	{
+
+#if defined(__sgi) // IRIX doesn't like global mouse state
+		mouse.buttonState = SDL_GetMouseState(&mx, &my);
+		mouse.absX = mx;
+		mouse.absY = my;
+#else
 		mouse.buttonState = SDL_GetGlobalMouseState(&mx, &my);
 
 		mouse.absX = mx;
@@ -304,6 +310,7 @@ void readMouseXY(void)
 
 		mx -= windowX;
 		my -= windowY;
+#endif
 	}
 
 	mouse.rawX = mx;

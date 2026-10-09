@@ -2010,6 +2010,13 @@ bool setupVideo(void)
 #endif
 	SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
 
+#if defined(__sgi)
+	/* Don't let SDL back the window surface with a hidden (OpenGL) renderer,
+	** or the software renderer fails with "Renderer already associated with window".
+	*/
+	SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, "0");
+#endif
+
 	video.window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED, screenW, screenH, windowFlags);
 

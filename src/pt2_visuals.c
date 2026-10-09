@@ -1980,7 +1980,7 @@ bool setupVideo(void)
 	int32_t screenW = SCREEN_W * config.videoScaleFactor;
 	int32_t screenH = SCREEN_H * config.videoScaleFactor;
 
-	uint32_t rendererFlags = SDL_RENDERER_SOFTWARE;
+	uint32_t rendererFlags = SDL_RENDERER_ACCELERATED;
 
 	SDL_DisplayMode dm;
 
@@ -2012,7 +2012,8 @@ bool setupVideo(void)
 
 #if defined(__sgi)
 	/* Don't let SDL back the window surface with a hidden (OpenGL) renderer,
-	** or the software renderer fails with "Renderer already associated with window".
+	** or the software renderer fallback fails with "Renderer already associated with window".
+	** Set SDL_RENDER_DRIVER=software in the environment to force software rendering.
 	*/
 	SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, "0");
 #endif
@@ -2033,6 +2034,12 @@ bool setupVideo(void)
 		{
 			video.vsync60HzPresent = false;
 			rendererFlags &= ~SDL_RENDERER_PRESENTVSYNC;
+			video.renderer = SDL_CreateRenderer(video.window, -1, rendererFlags);
+		}
+
+		if (video.renderer == NULL) // no usable GPU renderer, fall back to software rendering
+		{
+			rendererFlags = SDL_RENDERER_SOFTWARE;
 			video.renderer = SDL_CreateRenderer(video.window, -1, rendererFlags);
 		}
 

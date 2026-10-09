@@ -2051,6 +2051,15 @@ bool setupVideo(void)
 		}
 	}
 
+	SDL_RendererInfo rendererInfo;
+	if (SDL_GetRendererInfo(video.renderer, &rendererInfo) == 0)
+	{
+		printf("Using %s renderer (%s)%s\n",
+			(rendererInfo.flags & SDL_RENDERER_ACCELERATED) ? "GL" : "SW", rendererInfo.name,
+			(rendererInfo.flags & SDL_RENDERER_PRESENTVSYNC) ? ", vsync on" : "");
+		fflush(stdout);
+	}
+
 	SDL_SetRenderDrawBlendMode(video.renderer, SDL_BLENDMODE_NONE);
 
 	if (config.pixelFilter == PIXELFILTER_LINEAR)

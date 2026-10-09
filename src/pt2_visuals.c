@@ -1980,7 +1980,7 @@ bool setupVideo(void)
 	int32_t screenW = SCREEN_W * config.videoScaleFactor;
 	int32_t screenH = SCREEN_H * config.videoScaleFactor;
 
-	uint32_t rendererFlags = SDL_RENDERER_SOFTWARE;
+	uint32_t rendererFlags = SDL_RENDERER_ACCELERATED;
 
 	SDL_DisplayMode dm;
 
@@ -2010,6 +2010,14 @@ bool setupVideo(void)
 #endif
 	SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
 
+#if defined(__sgi)
+	/* Don't let SDL back the window surface with a hidden (OpenGL) renderer,
+	** or the software renderer fallback fails with "Renderer already associated with window".
+	** Set SDL_RENDER_DRIVER=software in the environment to force software rendering.
+	*/
+	SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, "0");
+#endif
+
 	video.window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED, screenW, screenH, windowFlags);
 
@@ -2029,12 +2037,27 @@ bool setupVideo(void)
 			video.renderer = SDL_CreateRenderer(video.window, -1, rendererFlags);
 		}
 
+		if (video.renderer == NULL) // no usable GPU renderer, fall back to software rendering
+		{
+			rendererFlags = SDL_RENDERER_SOFTWARE;
+			video.renderer = SDL_CreateRenderer(video.window, -1, rendererFlags);
+		}
+
 		if (video.renderer == NULL)
 		{
 			showErrorMsgBox("Couldn't create SDL renderer:\n%s\n\n" \
 			                "Is your GPU (+ driver) too old?", SDL_GetError());
 			return false;
 		}
+	}
+
+	SDL_RendererInfo rendererInfo;
+	if (SDL_GetRendererInfo(video.renderer, &rendererInfo) == 0)
+	{
+		printf("Using %s renderer (%s)%s\n",
+			(rendererInfo.flags & SDL_RENDERER_ACCELERATED) ? "GL" : "SW", rendererInfo.name,
+			(rendererInfo.flags & SDL_RENDERER_PRESENTVSYNC) ? ", vsync on" : "");
+		fflush(stdout);
 	}
 
 	SDL_SetRenderDrawBlendMode(video.renderer, SDL_BLENDMODE_NONE);

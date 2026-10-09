@@ -3,6 +3,20 @@
 
 Compiled Windows/macOS binaries are always available at 16-bits.org/pt2.php
 
+== COMPILING ON IRIX ==
+
+Install SDL2 from SGUG-RSE
+
+- Use static SDL2:
+
+mkdir build && cd build
+cmake -DIRIX_STATIC_SDL2=ON ..
+make
+
+- Use shared SDL2:
+mkdir build && cd build
+cmake ..
+make
 
 == COMPILING ON LINUX ==
  1. Install the following packages:
